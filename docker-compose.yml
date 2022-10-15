@@ -1,0 +1,20 @@
+version: '3'
+services:
+  postgres:
+    container_name: postgres
+    build:
+      context:
+        ./database/
+    ports:
+      - "5432:5432"
+    env_file:
+      - .env
+  telegram:
+    container_name: telegram
+    build:
+      context:
+        ./telegram-bot
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env

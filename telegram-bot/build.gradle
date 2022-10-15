@@ -19,6 +19,8 @@ repositories {
 }
 
 dependencies {
+    implementation 'org.telegram:telegrambots-spring-boot-starter:6.1.0'
+    implementation 'com.github.pengrad:java-telegram-bot-api:6.2.0'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.liquibase:liquibase-core'
@@ -28,6 +30,23 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
-tasks.named('test') {
+test {
     useJUnitPlatform()
+    def properties = new Properties()
+    def propertiesFile = file("../.env")
+    if (propertiesFile.exists()) {
+        properties.load(propertiesFile.newDataInputStream())
+    }
+    environment "BOT_TOKEN" , properties.getProperty("BOT_TOKEN")
+    environment "BOT_USERNAME", properties.getProperty("BOT_USERNAME")
+}
+
+jar {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    manifest {
+        attributes "Main-Class": "ru/tvgu/telegrambot/TelegramBotApplication.java"
+    }
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
 }
