@@ -1,25 +1,30 @@
 package ru.tvgu.telegrambot.bot;
 
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import ru.tvgu.telegrambot.service.ProcessUpdateService;
 
-@Setter
 @Slf4j
 @Component
-@NoArgsConstructor
 public class SimpleTelegramBot extends TelegramLongPollingBot {
 
-    @Value("${application.bot-username}")
-    private String botUsername;
-    @Value("${application.bot-token}")
-    private String botToken;
+    private final String botUsername;
+    private final String botToken;
+    private final ProcessUpdateService processUpdateServices;
+
+    @Autowired
+    public SimpleTelegramBot(@Value("${application.bot-username}") String botUsername,
+                             @Value("${application.bot-token}") String botToken,
+                             ProcessUpdateService processUpdateServices) {
+        this.botUsername = botUsername;
+        this.botToken = botToken;
+        this.processUpdateServices = processUpdateServices;
+    }
 
     @Override
     public String getBotUsername() {
@@ -34,9 +39,6 @@ public class SimpleTelegramBot extends TelegramLongPollingBot {
     @Override
     @SneakyThrows
     public void onUpdateReceived(Update update) {
-        execute(SendMessage.builder()
-                .text(update.getMessage().getText())
-                .chatId(update.getMessage().getChatId())
-                .build());
+        processUpdateServices.process(update);
     }
 }
