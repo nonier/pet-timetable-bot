@@ -1,0 +1,19 @@
+#Application
+application:
+  bot-token: ${BOT_TOKEN}
+  bot-username: ${BOT_USERNAME}
+#Database
+spring:
+  profiles:
+    active: ${PROFILE}
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+
+#Liquibase
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.xml

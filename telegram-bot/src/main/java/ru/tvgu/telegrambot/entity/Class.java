@@ -5,28 +5,28 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Data
 @Entity
-@Table(name = "group")
+@Table(name = "class")
 @NoArgsConstructor
 @AllArgsConstructor
-public class Group {
+public class Class {
 
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name", nullable = false)
-    private String name;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "day", nullable = false)
+    private DAY day;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "period", nullable = false)
+    private Period period;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "faculty_id", referencedColumnName = "id")
-    private Faculty faculty;
-
-    @OneToMany(mappedBy = "group")
-    private List<Subject> subjects = new ArrayList<>();
+    @JoinColumn(name = "subject_id", referencedColumnName = "id")
+    private Subject subject;
 }

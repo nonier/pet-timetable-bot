@@ -10,10 +10,10 @@ import java.util.List;
 
 @Data
 @Entity
-@Table(name = "group")
-@NoArgsConstructor
+@Table(name = "subject")
 @AllArgsConstructor
-public class Group {
+@NoArgsConstructor
+public class Subject {
 
     @Id
     @Column(name = "id")
@@ -23,10 +23,13 @@ public class Group {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "faculty_id", referencedColumnName = "id")
-    private Faculty faculty;
+    @Column(name = "teacher", nullable = false)
+    private String teacher;
 
-    @OneToMany(mappedBy = "group")
-    private List<Subject> subjects = new ArrayList<>();
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "group_id", referencedColumnName = "id")
+    private Group group;
+
+    @OneToMany(mappedBy = "subject")
+    private List<Class> classes = new ArrayList<>();
 }

@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -23,5 +24,5 @@ public class Faculty {
     private String name;
 
     @OneToMany(mappedBy = "faculty")
-    private List<Group> groups;
+    private List<Group> groups = new ArrayList<>();
 }
