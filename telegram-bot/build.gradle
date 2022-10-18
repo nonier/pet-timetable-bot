@@ -28,6 +28,7 @@ dependencies {
     runtimeOnly 'org.postgresql:postgresql'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.testcontainers:testcontainers:1.17.5'
+    testImplementation 'org.testcontainers:postgresql:1.17.5'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
@@ -38,8 +39,9 @@ test {
     if (propertiesFile.exists()) {
         properties.load(propertiesFile.newDataInputStream())
     }
-    environment "BOT_TOKEN" , properties.getProperty("BOT_TOKEN")
-    environment "BOT_USERNAME", properties.getProperty("BOT_USERNAME")
+    properties.forEach {
+        key,value -> environment key, value
+    }
 }
 
 jar {
