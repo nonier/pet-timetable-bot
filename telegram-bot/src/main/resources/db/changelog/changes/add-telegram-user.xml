@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+   http://www.liquibase.org/xml/ns/dbchangelog
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet id="20102022005-1" author="d.ilyin">
+        <createTable tableName="telegram_user">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true" primaryKeyName="pk_telegram_user"/>
+            </column>
+            <column name="faculty_id" type="bigint">
+                <constraints references="faculty(id)" foreignKeyName="fk_telegram_user_faculty"/>
+            </column>
+            <column name="group_id" type="bigint">
+                <constraints references="group(id)" foreignKeyName="fk_telegram_user_group"/>
+            </column>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>

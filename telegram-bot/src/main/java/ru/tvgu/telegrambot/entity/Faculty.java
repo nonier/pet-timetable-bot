@@ -1,8 +1,6 @@
 package ru.tvgu.telegrambot.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -11,6 +9,8 @@ import java.util.List;
 @Data
 @Entity
 @Table(name = "faculty")
+@ToString(exclude = "groups")
+@EqualsAndHashCode(exclude = "groups")
 @NoArgsConstructor
 @AllArgsConstructor
 public class Faculty {
