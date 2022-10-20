@@ -6,7 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import ru.tvgu.telegrambot.entity.Class;
 import ru.tvgu.telegrambot.entity.StudyGroup;
-import ru.tvgu.telegrambot.entity.Period;
+import ru.tvgu.telegrambot.entity.WeekType;
 import ru.tvgu.telegrambot.entity.TelegramUser;
 import ru.tvgu.telegrambot.repository.SubjectRepository;
 import ru.tvgu.telegrambot.service.SendMessageService;
@@ -41,12 +41,12 @@ public class TimetableServiceImpl implements TimetableService {
     @Override
     public String getTimeTableForToday(StudyGroup studyGroup) {
         LocalDate now = LocalDate.now();
-        Period period = DateUtils.getWeekPeriodByDate(now);
+        WeekType period = DateUtils.getWeekPeriodByDate(now);
         return subjectRepository.findAllByStudyGroup(studyGroup)
                 .stream()
                 .flatMap(subject -> subject.getClasses().stream())
-                .filter(cls -> Objects.equals(period, cls.getPeriod())
-                        || Period.EVERY_WEEK.equals(cls.getPeriod()))
+                .filter(cls -> Objects.equals(period, cls.getWeekType())
+                        || WeekType.EVERY.equals(cls.getWeekType()))
                 .filter(cls -> Objects.equals(now.getDayOfWeek(), cls.getDayOfWeek()))
                 .map(this::parseClass)
                 .collect(Collectors.joining(System.lineSeparator()));
@@ -55,12 +55,12 @@ public class TimetableServiceImpl implements TimetableService {
     @Override
     public String getTimeTableForWeek(StudyGroup studyGroup) {
         LocalDate now = LocalDate.now();
-        Period period = DateUtils.getWeekPeriodByDate(now);
+        WeekType period = DateUtils.getWeekPeriodByDate(now);
         return subjectRepository.findAllByStudyGroup(studyGroup)
                 .stream()
                 .flatMap(subject -> subject.getClasses().stream())
-                .filter(cls -> Objects.equals(period, cls.getPeriod())
-                        || Period.EVERY_WEEK.equals(cls.getPeriod()))
+                .filter(cls -> Objects.equals(period, cls.getWeekType())
+                        || WeekType.EVERY.equals(cls.getWeekType()))
                 .map(this::parseClass)
                 .collect(Collectors.joining(System.lineSeparator() + System.lineSeparator()));
     }
@@ -71,11 +71,13 @@ public class TimetableServiceImpl implements TimetableService {
                 : update.getMessage().getChatId();
         if (update.hasCallbackQuery()) {
             if (TIMETABLE_FOR_TODAY.equals(update.getCallbackQuery().getData())) {
-                sendMessageService.sendMessage(chatId, getTimeTableForToday(telegramUser.getStudyGroup()),
+                String timeTableForToday = getTimeTableForToday(telegramUser.getStudyGroup());
+                sendMessageService.sendMessage(chatId, timeTableForToday.isEmpty() ? "Нет данных для данной группы" : timeTableForToday,
                         Collections.emptyList());
             }
             if (TIMETABLE_FOR_WEEK.equals(update.getCallbackQuery().getData())) {
-                sendMessageService.sendMessage(chatId, getTimeTableForWeek(telegramUser.getStudyGroup()),
+                String timeTableForWeek = getTimeTableForWeek(telegramUser.getStudyGroup());
+                sendMessageService.sendMessage(chatId,timeTableForWeek.isEmpty() ? "Нет данных для данной группы" : timeTableForWeek,
                         Collections.emptyList());
             }
         } else {

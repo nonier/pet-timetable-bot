@@ -1,7 +1,7 @@
 package ru.tvgu.telegrambot.entity;
 
-public enum Period {
+public enum WeekType {
     PLUS,
     MINUS,
-    EVERY_WEEK
+    EVERY
 }

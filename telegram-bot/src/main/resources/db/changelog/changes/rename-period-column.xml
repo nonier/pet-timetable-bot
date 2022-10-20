@@ -7,8 +7,8 @@
    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
    http://www.liquibase.org/xml/ns/dbchangelog
    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
-    <include file="changes/init-db.xml" relativeToChangelogFile="true"/>
-    <include file="changes/add-telegram-user.xml" relativeToChangelogFile="true"/>
-    <include file="changes/rename-group-table.xml" relativeToChangelogFile="true"/>
-    <include file="changes/rename-period-column.xml" relativeToChangelogFile="true"/>
+
+    <changeSet id="21102022045-1" author="d.ilyin">
+        <renameColumn tableName="class" oldColumnName="period" newColumnName="week_type"/>
+    </changeSet>
 </databaseChangeLog>

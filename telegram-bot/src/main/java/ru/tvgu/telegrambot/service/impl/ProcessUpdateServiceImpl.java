@@ -33,6 +33,9 @@ public class ProcessUpdateServiceImpl implements ProcessUpdateService {
     public void process(Update update) {
         Long userId = update.hasCallbackQuery() ? update.getCallbackQuery().getFrom().getId()
                 : update.getMessage().getFrom().getId();
+        if (update.hasMessage() && FORGET_ME_COMMAND.equals(update.getMessage().getText())) {
+            telegramUserService.deleteById(userId);
+        }
         telegramUserService.findById(userId)
                 .ifPresentOrElse(
                         telegramUser -> catchUserUpdate(telegramUser, update),
@@ -42,9 +45,6 @@ public class ProcessUpdateServiceImpl implements ProcessUpdateService {
 
     @SneakyThrows
     private void catchUserUpdate(TelegramUser telegramUser, Update update) {
-        if (update.hasMessage() && FORGET_ME_COMMAND.equals(update.getMessage().getText())) {
-            telegramUserService.deleteById(telegramUser.getId());
-        }
         telegramUserService.fillUserInfo(telegramUser, update);
         if (telegramUser.getFaculty() != null && telegramUser.getStudyGroup() != null) {
             timetableService.getTimeTable(telegramUser, update);

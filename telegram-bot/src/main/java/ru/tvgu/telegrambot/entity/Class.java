@@ -24,8 +24,8 @@ public class Class {
     private DayOfWeek dayOfWeek;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "period", nullable = false)
-    private Period period;
+    @Column(name = "week_type", nullable = false)
+    private WeekType weekType;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subject_id", referencedColumnName = "id")
