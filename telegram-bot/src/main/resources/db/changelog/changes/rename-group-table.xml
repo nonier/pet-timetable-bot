@@ -10,5 +10,17 @@
 
     <changeSet id="20102022057-1" author="d.ilyin">
         <renameTable oldTableName="group" newTableName="study_group"/>
+        <dropColumn tableName="telegram_user" columnName="group_id"/>
+        <dropColumn tableName="subject" columnName="group_id"/>
+        <addColumn tableName="telegram_user">
+            <column name="study_group_id" type="bigint">
+                <constraints references="study_group(id)" foreignKeyName="fk_telegram_user_study_group"/>
+            </column>
+        </addColumn>
+        <addColumn tableName="subject">
+            <column name="study_group_id" type="bigint">
+                <constraints references="study_group(id)" foreignKeyName="fk_subject_study_group"/>
+            </column>
+        </addColumn>
     </changeSet>
 </databaseChangeLog>

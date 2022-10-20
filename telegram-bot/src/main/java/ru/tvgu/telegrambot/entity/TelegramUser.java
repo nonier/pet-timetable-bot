@@ -22,6 +22,6 @@ public class TelegramUser {
     private Faculty faculty;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "group_id", referencedColumnName = "id")
+    @JoinColumn(name = "study_group_id", referencedColumnName = "id")
     private Group group;
 }

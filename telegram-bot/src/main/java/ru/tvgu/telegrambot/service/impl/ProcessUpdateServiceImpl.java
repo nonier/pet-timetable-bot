@@ -9,10 +9,11 @@ import ru.tvgu.telegrambot.entity.Faculty;
 import ru.tvgu.telegrambot.entity.Group;
 import ru.tvgu.telegrambot.entity.TelegramUser;
 import ru.tvgu.telegrambot.repository.FacultyRepository;
-import ru.tvgu.telegrambot.repository.GroupRepository;
+import ru.tvgu.telegrambot.repository.StudyGroupRepository;
 import ru.tvgu.telegrambot.repository.TelegramUserRepository;
 import ru.tvgu.telegrambot.service.ProcessUpdateService;
 import ru.tvgu.telegrambot.service.SendMessageService;
+import ru.tvgu.telegrambot.service.TimetableService;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.Collections;
@@ -24,15 +25,17 @@ public class ProcessUpdateServiceImpl implements ProcessUpdateService {
 
     private final FacultyRepository facultyRepository;
     private final TelegramUserRepository telegramUserRepository;
-    private final GroupRepository groupRepository;
+    private final StudyGroupRepository studyGroupRepository;
     private final SendMessageService sendMessageService;
+    private final TimetableService timetableService;
 
     @Autowired
-    public ProcessUpdateServiceImpl(FacultyRepository facultyRepository, TelegramUserRepository telegramUserRepository, GroupRepository groupRepository, SendMessageService sendMessageService) {
+    public ProcessUpdateServiceImpl(FacultyRepository facultyRepository, TelegramUserRepository telegramUserRepository, StudyGroupRepository studyGroupRepository, SendMessageService sendMessageService, TimetableService timetableService) {
         this.facultyRepository = facultyRepository;
         this.telegramUserRepository = telegramUserRepository;
-        this.groupRepository = groupRepository;
+        this.studyGroupRepository = studyGroupRepository;
         this.sendMessageService = sendMessageService;
+        this.timetableService = timetableService;
     }
 
     @Override
@@ -63,7 +66,8 @@ public class ProcessUpdateServiceImpl implements ProcessUpdateService {
                         });
                 telegramUser.setFaculty(faculty);
                 telegramUser.setId(update.getCallbackQuery().getFrom().getId());
-                List<String> groupButtons = groupRepository.findAllByFaculty(faculty)
+                telegramUserRepository.save(telegramUser);
+                List<String> groupButtons = studyGroupRepository.findAllByFaculty(faculty)
                         .stream()
                         .map(Group::getName)
                         .toList();
@@ -75,7 +79,45 @@ public class ProcessUpdateServiceImpl implements ProcessUpdateService {
                         .toList();
                 sendMessageService.sendMessage(chatId, "Выбери факультет", facultyButtons);
             }
+            return;
         }
-        telegramUserRepository.save(telegramUser);
+        if (telegramUser.getGroup() == null) {
+            if (update.hasCallbackQuery()) {
+                Group group = studyGroupRepository.findByName(update.getCallbackQuery().getData())
+                        .orElseThrow(
+                                () -> {
+                                    sendMessageService.sendMessage(chatId,
+                                            "Группы с именем: %s не найдено".formatted(update.getCallbackQuery().getData()),
+                                            Collections.emptyList());
+                                    throw new EntityNotFoundException("Group with name: %s not found"
+                                            .formatted(update.getCallbackQuery().getData()));
+                                }
+                        );
+                telegramUser.setGroup(group);
+                telegramUserRepository.save(telegramUser);
+                sendMessageService.sendMessage(chatId, "Выбирай",
+                        List.of("Расписание на сегодня", "Расписание на неделю"));
+            } else {
+                List<String> groupButtons = studyGroupRepository.findAllByFaculty(telegramUser.getFaculty())
+                        .stream()
+                        .map(Group::getName)
+                        .toList();
+                sendMessageService.sendMessage(chatId, "Выбери группу", groupButtons);
+            }
+            return;
+        }
+        if (update.hasCallbackQuery()) {
+            if ("Расписание на сегодня".equals(update.getCallbackQuery().getData())) {
+                sendMessageService.sendMessage(chatId, timetableService.getTimeTableForToday(telegramUser.getGroup()),
+                        Collections.emptyList());
+            }
+            if ("Расписание на неделю".equals(update.getCallbackQuery().getData())) {
+                sendMessageService.sendMessage(chatId, timetableService.getTimeTableForWeek(telegramUser.getGroup()),
+                        Collections.emptyList());
+            }
+        } else {
+            sendMessageService.sendMessage(chatId, "Выбирай",
+                    List.of("Расписание на сегодня", "Расписание на неделю"));
+        }
     }
 }
