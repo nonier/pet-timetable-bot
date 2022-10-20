@@ -3,11 +3,12 @@ package ru.tvgu.telegrambot.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import ru.tvgu.telegrambot.entity.Faculty;
+import ru.tvgu.telegrambot.entity.Group;
 
-import java.util.Optional;
+import java.util.List;
 
 @Repository
-public interface FacultyRepository extends JpaRepository<Faculty, Long> {
+public interface GroupRepository extends JpaRepository<Group, Long> {
 
-    Optional<Faculty> findByName(String name);
+    List<Group> findAllByFaculty(Faculty faculty);
 }

@@ -8,7 +8,7 @@ import java.util.List;
 
 @Data
 @Entity
-@Table(name = "group")
+@Table(name = "study_group")
 @ToString(exclude = "subjects")
 @EqualsAndHashCode(exclude = "subjects")
 @NoArgsConstructor
