@@ -6,7 +6,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import ru.tvgu.telegrambot.entity.Faculty;
-import ru.tvgu.telegrambot.entity.Group;
+import ru.tvgu.telegrambot.entity.Period;
+import ru.tvgu.telegrambot.entity.StudyGroup;
 import ru.tvgu.telegrambot.entity.TelegramUser;
 import ru.tvgu.telegrambot.repository.FacultyRepository;
 import ru.tvgu.telegrambot.repository.StudyGroupRepository;
@@ -18,6 +19,9 @@ import ru.tvgu.telegrambot.service.TimetableService;
 import javax.persistence.EntityNotFoundException;
 import java.util.Collections;
 import java.util.List;
+
+import static ru.tvgu.telegrambot.service.impl.TimetableServiceImpl.TIMETABLE_FOR_TODAY;
+import static ru.tvgu.telegrambot.service.impl.TimetableServiceImpl.TIMETABLE_FOR_WEEK;
 
 @Service
 @Transactional
@@ -69,7 +73,7 @@ public class ProcessUpdateServiceImpl implements ProcessUpdateService {
                 telegramUserRepository.save(telegramUser);
                 List<String> groupButtons = studyGroupRepository.findAllByFaculty(faculty)
                         .stream()
-                        .map(Group::getName)
+                        .map(StudyGroup::getName)
                         .toList();
                 sendMessageService.sendMessage(chatId, "Выбери группу", groupButtons);
             } else {
@@ -81,9 +85,9 @@ public class ProcessUpdateServiceImpl implements ProcessUpdateService {
             }
             return;
         }
-        if (telegramUser.getGroup() == null) {
+        if (telegramUser.getStudyGroup() == null) {
             if (update.hasCallbackQuery()) {
-                Group group = studyGroupRepository.findByName(update.getCallbackQuery().getData())
+                StudyGroup studyGroup = studyGroupRepository.findByName(update.getCallbackQuery().getData())
                         .orElseThrow(
                                 () -> {
                                     sendMessageService.sendMessage(chatId,
@@ -93,26 +97,26 @@ public class ProcessUpdateServiceImpl implements ProcessUpdateService {
                                             .formatted(update.getCallbackQuery().getData()));
                                 }
                         );
-                telegramUser.setGroup(group);
+                telegramUser.setStudyGroup(studyGroup);
                 telegramUserRepository.save(telegramUser);
                 sendMessageService.sendMessage(chatId, "Выбирай",
-                        List.of("Расписание на сегодня", "Расписание на неделю"));
+                        List.of(TIMETABLE_FOR_TODAY, TIMETABLE_FOR_WEEK));
             } else {
                 List<String> groupButtons = studyGroupRepository.findAllByFaculty(telegramUser.getFaculty())
                         .stream()
-                        .map(Group::getName)
+                        .map(StudyGroup::getName)
                         .toList();
                 sendMessageService.sendMessage(chatId, "Выбери группу", groupButtons);
             }
             return;
         }
         if (update.hasCallbackQuery()) {
-            if ("Расписание на сегодня".equals(update.getCallbackQuery().getData())) {
-                sendMessageService.sendMessage(chatId, timetableService.getTimeTableForToday(telegramUser.getGroup()),
+            if (TIMETABLE_FOR_TODAY.equals(update.getCallbackQuery().getData())) {
+                sendMessageService.sendMessage(chatId, timetableService.getTimeTableForToday(telegramUser.getStudyGroup()),
                         Collections.emptyList());
             }
-            if ("Расписание на неделю".equals(update.getCallbackQuery().getData())) {
-                sendMessageService.sendMessage(chatId, timetableService.getTimeTableForWeek(telegramUser.getGroup()),
+            if (TIMETABLE_FOR_WEEK.equals(update.getCallbackQuery().getData())) {
+                sendMessageService.sendMessage(chatId, timetableService.getTimeTableForWeek(telegramUser.getStudyGroup()),
                         Collections.emptyList());
             }
         } else {

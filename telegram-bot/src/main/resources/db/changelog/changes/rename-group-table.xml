@@ -22,5 +22,6 @@
                 <constraints references="study_group(id)" foreignKeyName="fk_subject_study_group"/>
             </column>
         </addColumn>
+        <renameColumn tableName="class" oldColumnName="day" newColumnName="day_of_week"/>
     </changeSet>
 </databaseChangeLog>

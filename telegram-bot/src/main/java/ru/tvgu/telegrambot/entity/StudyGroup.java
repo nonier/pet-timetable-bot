@@ -13,7 +13,7 @@ import java.util.List;
 @EqualsAndHashCode(exclude = "subjects")
 @NoArgsConstructor
 @AllArgsConstructor
-public class Group {
+public class StudyGroup {
 
     @Id
     @Column(name = "id")
@@ -27,6 +27,6 @@ public class Group {
     @JoinColumn(name = "faculty_id", referencedColumnName = "id")
     private Faculty faculty;
 
-    @OneToMany(mappedBy = "group")
+    @OneToMany(mappedBy = "studyGroup")
     private List<Subject> subjects = new ArrayList<>();
 }

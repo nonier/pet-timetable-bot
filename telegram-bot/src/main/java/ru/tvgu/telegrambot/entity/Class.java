@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.DayOfWeek;
 
 @Data
 @Entity
@@ -19,8 +20,8 @@ public class Class {
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "day", nullable = false)
-    private DAY day;
+    @Column(name = "day_of_week", nullable = false)
+    private DayOfWeek dayOfWeek;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "period", nullable = false)

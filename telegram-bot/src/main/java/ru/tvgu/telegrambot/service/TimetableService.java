@@ -1,10 +1,10 @@
 package ru.tvgu.telegrambot.service;
 
-import ru.tvgu.telegrambot.entity.Group;
+import ru.tvgu.telegrambot.entity.StudyGroup;
 
 public interface TimetableService {
 
-    String getTimeTableForToday(Group group);
+    String getTimeTableForToday(StudyGroup studyGroup);
 
-    String getTimeTableForWeek(Group group);
+    String getTimeTableForWeek(StudyGroup studyGroup);
 }

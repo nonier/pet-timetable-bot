@@ -24,5 +24,5 @@ public class Faculty {
     private String name;
 
     @OneToMany(mappedBy = "faculty")
-    private List<Group> groups = new ArrayList<>();
+    private List<StudyGroup> studyGroups = new ArrayList<>();
 }

@@ -28,7 +28,7 @@ public class Subject {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "study_group_id", referencedColumnName = "id")
-    private Group group;
+    private StudyGroup studyGroup;
 
     @OneToMany(mappedBy = "subject")
     private List<Class> classes = new ArrayList<>();
