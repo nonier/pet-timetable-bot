@@ -27,6 +27,9 @@ public class Class {
     @Column(name = "week_type", nullable = false)
     private WeekType weekType;
 
+    @Column(name = "audience_number", nullable = false)
+    private Integer audienceNumber;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subject_id", referencedColumnName = "id")
     private Subject subject;

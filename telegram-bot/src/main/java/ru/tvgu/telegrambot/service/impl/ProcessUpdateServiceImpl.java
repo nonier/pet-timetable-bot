@@ -18,13 +18,11 @@ public class ProcessUpdateServiceImpl implements ProcessUpdateService {
     private static final String FORGET_ME_COMMAND = "/forget";
 
     private final TelegramUserService telegramUserService;
-    private final SendMessageService sendMessageService;
     private final TimetableService timetableService;
 
     @Autowired
-    public ProcessUpdateServiceImpl(TelegramUserService telegramUserService, SendMessageService sendMessageService, TimetableService timetableService) {
+    public ProcessUpdateServiceImpl(TelegramUserService telegramUserService, TimetableService timetableService) {
         this.telegramUserService = telegramUserService;
-        this.sendMessageService = sendMessageService;
         this.timetableService = timetableService;
     }
 

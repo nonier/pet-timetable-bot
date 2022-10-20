@@ -48,7 +48,7 @@ public class TimetableServiceImpl implements TimetableService {
                 .filter(cls -> Objects.equals(period, cls.getWeekType())
                         || WeekType.EVERY.equals(cls.getWeekType()))
                 .filter(cls -> Objects.equals(now.getDayOfWeek(), cls.getDayOfWeek()))
-                .map(this::parseClass)
+                .map(this::parseTodayClass)
                 .collect(Collectors.joining(System.lineSeparator()));
     }
 
@@ -61,7 +61,7 @@ public class TimetableServiceImpl implements TimetableService {
                 .flatMap(subject -> subject.getClasses().stream())
                 .filter(cls -> Objects.equals(period, cls.getWeekType())
                         || WeekType.EVERY.equals(cls.getWeekType()))
-                .map(this::parseClass)
+                .map(this::parseWeekClass)
                 .collect(Collectors.joining(System.lineSeparator() + System.lineSeparator()));
     }
 
@@ -86,9 +86,23 @@ public class TimetableServiceImpl implements TimetableService {
         }
     }
 
-    private String parseClass(Class cl) {
-        return String.format("%s\n%s\n%s\n",
-                cl.getDayOfWeek().getDisplayName(TextStyle.FULL, new Locale("ru")), cl.getSubject().getTeacher(),
-                cl.getSubject().getName());
+    private String parseTodayClass(Class cl) {
+        return cl.getSubject().getName() +
+                System.lineSeparator() +
+                cl.getSubject().getTeacher() +
+                System.lineSeparator() +
+                cl.getAudienceNumber() +
+                System.lineSeparator();
+    }
+
+    private String parseWeekClass(Class cl) {
+        return cl.getDayOfWeek().getDisplayName(TextStyle.FULL, new Locale("ru")) +
+                System.lineSeparator() +
+                cl.getSubject().getName() +
+                System.lineSeparator() +
+                cl.getSubject().getTeacher() +
+                System.lineSeparator() +
+                cl.getAudienceNumber() +
+                System.lineSeparator();
     }
 }
