@@ -12,7 +12,7 @@ import java.util.List;
 public interface SubjectRepository extends JpaRepository<Subject, Long> {
 
     @Query("""
-            select subject
+            select distinct subject
             from Subject subject
             join fetch subject.classes
             where subject.studyGroup = :studyGroup

@@ -9,8 +9,8 @@ import java.util.List;
 @Data
 @Entity
 @Table(name = "faculty")
-@ToString(exclude = "groups")
-@EqualsAndHashCode(exclude = "groups")
+@ToString(exclude = "studyGroups")
+@EqualsAndHashCode(exclude = "studyGroups")
 @NoArgsConstructor
 @AllArgsConstructor
 public class Faculty {
