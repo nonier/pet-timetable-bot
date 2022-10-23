@@ -14,7 +14,7 @@ public interface SubjectRepository extends JpaRepository<Subject, Long> {
     @Query("""
             select distinct subject
             from Subject subject
-            join fetch subject.classes
+            join fetch subject.studyClasses
             where subject.studyGroup = :studyGroup
             """)
     List<Subject> findAllByStudyGroup(StudyGroup studyGroup);
@@ -22,7 +22,8 @@ public interface SubjectRepository extends JpaRepository<Subject, Long> {
     @Query("""
             select subject
             from Subject subject 
-            join fetch subject.studyGroup
+            join fetch subject.studyGroup studyGroup
+            join fetch studyGroup.faculty
             """)
     List<Subject> findAllFetchStudyGroup();
 }

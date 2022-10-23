@@ -13,7 +13,7 @@ import java.time.LocalTime;
 @Table(name = "class")
 @NoArgsConstructor
 @AllArgsConstructor
-public class Class {
+public class StudyClass {
 
     @Id
     @Column(name = "id")

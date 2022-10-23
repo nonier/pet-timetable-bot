@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import ru.tvgu.telegrambot.entity.Class;
+import ru.tvgu.telegrambot.entity.StudyClass;
 import ru.tvgu.telegrambot.entity.Faculty;
 import ru.tvgu.telegrambot.entity.StudyGroup;
 import ru.tvgu.telegrambot.entity.Subject;
@@ -50,12 +50,12 @@ public class CommandServiceImpl implements CommandService {
                     : StringUtils.substringAfter(update.getMessage().getText(),"/");
             switch (text) {
                 case "help" -> sendAdminHelp(update);
-                case "getStudyGroups" -> getStudyGroups(update);
+                case "getGroups" -> getGroups(update);
                 case "getFaculties" -> getFaculties(update);
                 case "getSubjects" -> getSubjects(update);
                 case "getClasses" -> getClasses(update);
                 case "createFaculty" -> createFaculty(command);
-                case "createStudyGroup" -> createStudyGroup(command);
+                case "createGroup" -> createGroup(command);
                 case "createSubject" -> createSubject(command);
                 case "createClass" -> createClass(command);
                 case "grantAdminRole" -> grantAdminRole(command);
@@ -74,6 +74,7 @@ public class CommandServiceImpl implements CommandService {
         switch (text) {
             case "help" -> sendUserHelp(update);
             case "forget" -> telegramUserService.deleteUserInfoById(userId);
+            default -> sendMessageService.sendMessage(update.getMessage().getChatId(), "Неподдерживаемая команда");
         }
     }
 
@@ -85,11 +86,11 @@ public class CommandServiceImpl implements CommandService {
                 /forget - забывает выбранный факультет и группу, можно заполнить заного
                 /grantAdminRole {id} - добавляет юзеру роль админ по id
                 /getFaculties - возвращает список факультетов в формате json
-                /getStudyGroups - возвращает список групп в формате json
+                /getGroups - возвращает список групп в формате json
                 /getSubjects - возвращает список предметов в формате json
                 /getClasses - возвращает список пар в формате json
                 /createFaculty {faculty json} - создает факультет
-                /createStudyGroup {studyGroup json} - создает группу
+                /createGroup {studyGroup json} - создает группу
                 /createSubject {subject json} - создает предмет
                 /createClass {class json} - создает пару
                 """;
@@ -119,7 +120,7 @@ public class CommandServiceImpl implements CommandService {
     }
 
     @SneakyThrows
-    private void getStudyGroups(Update update) {
+    private void getGroups(Update update) {
         String studyGroupsJson = objectMapper.writeValueAsString(studyGroupRepository.findAllFetchFaculty());
         sendMessageService.sendMessage(update.getMessage().getChatId(), studyGroupsJson);
     }
@@ -133,7 +134,7 @@ public class CommandServiceImpl implements CommandService {
     @SneakyThrows
     private void createClass(String text) {
         String json = StringUtils.substringAfter(text, " ");
-        Class clazz = objectMapper.readValue(json, Class.class);
+        StudyClass clazz = objectMapper.readValue(json, StudyClass.class);
         classRepository.save(clazz);
     }
 
@@ -145,7 +146,7 @@ public class CommandServiceImpl implements CommandService {
     }
 
     @SneakyThrows
-    private void createStudyGroup(String text) {
+    private void createGroup(String text) {
         String json = StringUtils.substringAfter(text, " ");
         StudyGroup studyGroup = objectMapper.readValue(json, StudyGroup.class);
         studyGroupRepository.save(studyGroup);

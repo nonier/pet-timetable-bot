@@ -10,8 +10,8 @@ import java.util.List;
 @Data
 @Entity
 @Table(name = "subject")
-@ToString(exclude = "classes")
-@EqualsAndHashCode(exclude = "classes")
+@ToString(exclude = "studyClasses")
+@EqualsAndHashCode(exclude = "studyClasses")
 @AllArgsConstructor
 @NoArgsConstructor
 public class Subject {
@@ -33,5 +33,5 @@ public class Subject {
 
     @JsonIgnore
     @OneToMany(mappedBy = "subject")
-    private List<Class> classes = new ArrayList<>();
+    private List<StudyClass> studyClasses = new ArrayList<>();
 }

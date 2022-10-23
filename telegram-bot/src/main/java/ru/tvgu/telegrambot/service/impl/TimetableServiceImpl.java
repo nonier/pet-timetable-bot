@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import ru.tvgu.telegrambot.entity.Class;
+import ru.tvgu.telegrambot.entity.StudyClass;
 import ru.tvgu.telegrambot.entity.StudyGroup;
 import ru.tvgu.telegrambot.entity.WeekType;
 import ru.tvgu.telegrambot.entity.TelegramUser;
@@ -43,7 +43,7 @@ public class TimetableServiceImpl implements TimetableService {
         WeekType period = DateUtils.getWeekPeriodByDate(now);
         return subjectRepository.findAllByStudyGroup(studyGroup)
                 .stream()
-                .flatMap(subject -> subject.getClasses().stream())
+                .flatMap(subject -> subject.getStudyClasses().stream())
                 .filter(cls -> Objects.equals(period, cls.getWeekType())
                         || WeekType.EVERY.equals(cls.getWeekType()))
                 .filter(cls -> Objects.equals(now.getDayOfWeek(), cls.getDayOfWeek()))
@@ -57,7 +57,7 @@ public class TimetableServiceImpl implements TimetableService {
         WeekType period = DateUtils.getWeekPeriodByDate(now);
         return subjectRepository.findAllByStudyGroup(studyGroup)
                 .stream()
-                .flatMap(subject -> subject.getClasses().stream())
+                .flatMap(subject -> subject.getStudyClasses().stream())
                 .filter(cls -> Objects.equals(period, cls.getWeekType())
                         || WeekType.EVERY.equals(cls.getWeekType()))
                 .map(this::parseWeekClass)
@@ -83,7 +83,7 @@ public class TimetableServiceImpl implements TimetableService {
         }
     }
 
-    private String parseTodayClass(Class cl) {
+    private String parseTodayClass(StudyClass cl) {
         return cl.getSubject().getName() +
                 System.lineSeparator() +
                 cl.getTime() +
@@ -94,7 +94,7 @@ public class TimetableServiceImpl implements TimetableService {
                 System.lineSeparator();
     }
 
-    private String parseWeekClass(Class cl) {
+    private String parseWeekClass(StudyClass cl) {
         return cl.getDayOfWeek().getDisplayName(TextStyle.FULL, new Locale("ru")) +
                 System.lineSeparator() +
                 cl.getSubject().getName() +
