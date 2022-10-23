@@ -77,17 +77,19 @@ public class TimetableServiceImpl implements TimetableService {
             }
             if (TIMETABLE_FOR_WEEK.equals(update.getCallbackQuery().getData())) {
                 String timeTableForWeek = getTimeTableForWeek(telegramUser.getStudyGroup());
-                sendMessageService.sendMessage(chatId,timeTableForWeek.isEmpty() ? "Нет данных для данной группы" : timeTableForWeek,
+                sendMessageService.sendMessage(chatId, timeTableForWeek.isEmpty() ? "Нет данных для данной группы" : timeTableForWeek,
                         Collections.emptyList());
             }
         } else {
-            sendMessageService.sendMessage(chatId, "Выбирай",
+            sendMessageService.sendMessage(chatId, "Выбери расписание",
                     List.of(TIMETABLE_FOR_TODAY, TIMETABLE_FOR_WEEK));
         }
     }
 
     private String parseTodayClass(Class cl) {
         return cl.getSubject().getName() +
+                System.lineSeparator() +
+                cl.getTime() +
                 System.lineSeparator() +
                 cl.getSubject().getTeacher() +
                 System.lineSeparator() +
@@ -99,6 +101,8 @@ public class TimetableServiceImpl implements TimetableService {
         return cl.getDayOfWeek().getDisplayName(TextStyle.FULL, new Locale("ru")) +
                 System.lineSeparator() +
                 cl.getSubject().getName() +
+                System.lineSeparator() +
+                cl.getTime() +
                 System.lineSeparator() +
                 cl.getSubject().getTeacher() +
                 System.lineSeparator() +

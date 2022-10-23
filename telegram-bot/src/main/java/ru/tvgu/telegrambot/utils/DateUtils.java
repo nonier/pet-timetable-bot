@@ -11,7 +11,7 @@ public final class DateUtils {
 
     public static WeekType getWeekPeriodByDate(LocalDate localDate) {
         LocalDate firstSeptember = LocalDate.of(localDate.getYear(), 9, 1);
-        return ChronoUnit.WEEKS.between(firstSeptember, localDate) % 2 == 0 ? WeekType.PLUS
-                : WeekType.MINUS;
+        return ChronoUnit.WEEKS.between(firstSeptember, localDate) % 2 == 0 ? WeekType.MINUS
+                : WeekType.PLUS;
     }
 }

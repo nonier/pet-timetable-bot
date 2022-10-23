@@ -67,7 +67,7 @@ public class TelegramUserServiceImpl implements TelegramUserService {
                 });
                 telegramUser.setStudyGroup(studyGroup);
                 telegramUserRepository.save(telegramUser);
-                sendMessageService.sendMessage(chatId, "Выбири расписание", List.of(TIMETABLE_FOR_TODAY, TIMETABLE_FOR_WEEK));
+                sendMessageService.sendMessage(chatId, "Выбери расписание", List.of(TIMETABLE_FOR_TODAY, TIMETABLE_FOR_WEEK));
             } else {
                 List<String> groupButtons = studyGroupRepository.findAllByFaculty(telegramUser.getFaculty()).stream().map(StudyGroup::getName).toList();
                 sendMessageService.sendMessage(chatId, "Выбери группу", groupButtons);
