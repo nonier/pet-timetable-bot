@@ -24,4 +24,7 @@ public class TelegramUser {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "study_group_id", referencedColumnName = "id")
     private StudyGroup studyGroup;
+
+    @Column(name = "is_admin", nullable = false, columnDefinition = "boolean default false")
+    private boolean isAdmin;
 }

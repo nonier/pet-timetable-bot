@@ -2,6 +2,7 @@
 application:
   bot-token: ${BOT_TOKEN}
   bot-username: ${BOT_USERNAME}
+  bot-owner-id: ${BOT_OWNER_ID}
 #Database
 spring:
   profiles:

@@ -13,4 +13,5 @@
     <include file="changes/rename-period-column.xml" relativeToChangelogFile="true"/>
     <include file="changes/add-audience-number-column.xml" relativeToChangelogFile="true"/>
     <include file="changes/add-time-column-in-class-table.xml" relativeToChangelogFile="true"/>
+    <include file="changes/add-is-admin-column-in-telegram-user.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>
