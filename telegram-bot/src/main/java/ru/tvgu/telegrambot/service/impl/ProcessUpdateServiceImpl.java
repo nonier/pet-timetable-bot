@@ -48,6 +48,7 @@ public class ProcessUpdateServiceImpl implements ProcessUpdateService {
         if (telegramUser.isAdmin() && update.hasMessage() && update.getMessage().hasText() &&
                 update.getMessage().getText().contains("/")) {
             adminCommandService.processAdminCommand(update.getMessage().getText(), update);
+            return;
         }
         telegramUserService.fillUserInfo(telegramUser, update);
         if (telegramUser.getFaculty() != null && telegramUser.getStudyGroup() != null) {
