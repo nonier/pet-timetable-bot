@@ -12,4 +12,6 @@ public interface TelegramUserService {
     Optional<TelegramUser> findById(Long userId);
 
     void deleteById(Long id);
+
+    void deleteUserInfoById(Long userId);
 }

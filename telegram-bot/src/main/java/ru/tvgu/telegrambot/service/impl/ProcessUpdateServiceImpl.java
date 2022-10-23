@@ -7,7 +7,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import ru.tvgu.telegrambot.entity.TelegramUser;
 import ru.tvgu.telegrambot.service.ProcessUpdateService;
-import ru.tvgu.telegrambot.service.SendMessageService;
 import ru.tvgu.telegrambot.service.TelegramUserService;
 import ru.tvgu.telegrambot.service.TimetableService;
 
@@ -32,7 +31,7 @@ public class ProcessUpdateServiceImpl implements ProcessUpdateService {
         Long userId = update.hasCallbackQuery() ? update.getCallbackQuery().getFrom().getId()
                 : update.getMessage().getFrom().getId();
         if (update.hasMessage() && FORGET_ME_COMMAND.equals(update.getMessage().getText())) {
-            telegramUserService.deleteById(userId);
+            telegramUserService.deleteUserInfoById(userId);
         }
         telegramUserService.findById(userId)
                 .ifPresentOrElse(

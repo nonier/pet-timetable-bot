@@ -86,4 +86,9 @@ public class TelegramUserServiceImpl implements TelegramUserService {
             telegramUserRepository.deleteById(id);
         }
     }
+
+    @Override
+    public void deleteUserInfoById(Long userId) {
+        telegramUserRepository.deleteUserInfoById(userId);
+    }
 }
