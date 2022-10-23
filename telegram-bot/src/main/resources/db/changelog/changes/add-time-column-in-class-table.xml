@@ -7,10 +7,12 @@
    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
    http://www.liquibase.org/xml/ns/dbchangelog
    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
-    <include file="changes/init-db.xml" relativeToChangelogFile="true"/>
-    <include file="changes/add-telegram-user.xml" relativeToChangelogFile="true"/>
-    <include file="changes/rename-group-table.xml" relativeToChangelogFile="true"/>
-    <include file="changes/rename-period-column.xml" relativeToChangelogFile="true"/>
-    <include file="changes/add-audience-number-column.xml" relativeToChangelogFile="true"/>
-    <include file="changes/add-time-column-in-class-table.xml" relativeToChangelogFile="true"/>
+
+    <changeSet id="231020221304-1" author="d.ilyin">
+        <addColumn tableName="class">
+            <column name="time" type="time">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

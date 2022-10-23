@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.DayOfWeek;
+import java.time.LocalTime;
 
 @Data
 @Entity
@@ -29,6 +30,9 @@ public class Class {
 
     @Column(name = "audience_number", nullable = false)
     private Integer audienceNumber;
+
+    @Column(name = "time", nullable = false)
+    private LocalTime time;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subject_id", referencedColumnName = "id")
