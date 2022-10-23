@@ -7,8 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import ru.tvgu.telegrambot.entity.StudyClass;
 import ru.tvgu.telegrambot.entity.Faculty;
+import ru.tvgu.telegrambot.entity.StudyClass;
 import ru.tvgu.telegrambot.entity.StudyGroup;
 import ru.tvgu.telegrambot.entity.Subject;
 import ru.tvgu.telegrambot.repository.ClassRepository;
@@ -49,6 +49,7 @@ public class CommandServiceImpl implements CommandService {
                     StringUtils.substringBetween(update.getMessage().getText(),"/"," ")
                     : StringUtils.substringAfter(update.getMessage().getText(),"/");
             switch (text) {
+                case "start" -> sendStart(update);
                 case "help" -> sendAdminHelp(update);
                 case "getGroups" -> getGroups(update);
                 case "getFaculties" -> getFaculties(update);
@@ -72,10 +73,19 @@ public class CommandServiceImpl implements CommandService {
     public void processUserCommand(String command, Update update, Long userId) {
         String text = StringUtils.substringAfter(command, "/");
         switch (text) {
+            case "start" -> sendStart(update);
             case "help" -> sendUserHelp(update);
             case "forget" -> telegramUserService.deleteUserInfoById(userId);
             default -> sendMessageService.sendMessage(update.getMessage().getChatId(), "Неподдерживаемая команда");
         }
+    }
+
+    private void sendStart(Update update) {
+        String start = """
+                привет!
+                бот может показывать тебе твоё расписание, если оно конечно в нём есть.
+                """;
+        sendMessageService.sendMessage(update.getMessage().getChatId(), start);
     }
 
     private void sendAdminHelp(Update update) {

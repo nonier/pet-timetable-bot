@@ -17,6 +17,7 @@ import java.util.List;
 public class Subject {
 
     @Id
+    @JsonIgnore
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

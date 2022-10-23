@@ -71,11 +71,11 @@ public class TimetableServiceImpl implements TimetableService {
         if (update.hasCallbackQuery()) {
             if (TIMETABLE_FOR_TODAY.equals(update.getCallbackQuery().getData())) {
                 String timeTableForToday = getTimeTableForToday(telegramUser.getStudyGroup());
-                sendMessageService.sendMessage(chatId, timeTableForToday.isEmpty() ? "Нет данных для данной группы" : timeTableForToday);
+                sendMessageService.sendMessage(chatId, timeTableForToday.isEmpty() ? "Пар нет" : timeTableForToday);
             }
             if (TIMETABLE_FOR_WEEK.equals(update.getCallbackQuery().getData())) {
                 String timeTableForWeek = getTimeTableForWeek(telegramUser.getStudyGroup());
-                sendMessageService.sendMessage(chatId, timeTableForWeek.isEmpty() ? "Нет данных для данной группы" : timeTableForWeek);
+                sendMessageService.sendMessage(chatId, timeTableForWeek.isEmpty() ? "Пар нет" : timeTableForWeek);
             }
         } else {
             sendMessageService.sendMessage(chatId, "Выбери расписание",
