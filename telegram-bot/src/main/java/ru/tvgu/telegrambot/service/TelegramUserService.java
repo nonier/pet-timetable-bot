@@ -14,4 +14,6 @@ public interface TelegramUserService {
     void deleteById(Long id);
 
     void deleteUserInfoById(Long userId);
+
+    void addAdminRole(Long userId);
 }

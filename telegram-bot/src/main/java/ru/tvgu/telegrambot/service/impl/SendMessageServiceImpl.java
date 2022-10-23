@@ -11,6 +11,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import ru.tvgu.telegrambot.bot.SimpleTelegramBot;
 import ru.tvgu.telegrambot.service.SendMessageService;
 
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -40,5 +41,11 @@ public class SendMessageServiceImpl implements SendMessageService {
                         .replyMarkup(new InlineKeyboardMarkup(List.of(inlineKeyboardButtons)))
                         .build()
         );
+    }
+
+    @Override
+    @SneakyThrows
+    public void sendMessage(Long chatId, String text) {
+        sendMessage(chatId, text, Collections.emptyList());
     }
 }

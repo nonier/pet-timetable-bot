@@ -45,7 +45,7 @@ public class TelegramUserServiceImpl implements TelegramUserService {
         if (telegramUser.getFaculty() == null) {
             if (update.hasCallbackQuery()) {
                 Faculty faculty = facultyRepository.findByName(update.getCallbackQuery().getData()).orElseThrow(() -> {
-                    sendMessageService.sendMessage(chatId, "Факультета с именем: %s не найдено".formatted(update.getCallbackQuery().getData()), Collections.emptyList());
+                    sendMessageService.sendMessage(chatId, "Факультета с именем: %s не найдено".formatted(update.getCallbackQuery().getData()));
                     throw new EntityNotFoundException("Faculty with name: %s not found".formatted(update.getCallbackQuery().getData()));
                 });
                 telegramUser.setFaculty(faculty);
@@ -62,7 +62,7 @@ public class TelegramUserServiceImpl implements TelegramUserService {
         if (telegramUser.getStudyGroup() == null) {
             if (update.hasCallbackQuery()) {
                 StudyGroup studyGroup = studyGroupRepository.findByName(update.getCallbackQuery().getData()).orElseThrow(() -> {
-                    sendMessageService.sendMessage(chatId, "Группы с именем: %s не найдено".formatted(update.getCallbackQuery().getData()), Collections.emptyList());
+                    sendMessageService.sendMessage(chatId, "Группы с именем: %s не найдено".formatted(update.getCallbackQuery().getData()));
                     throw new EntityNotFoundException("Group with name: %s not found".formatted(update.getCallbackQuery().getData()));
                 });
                 telegramUser.setStudyGroup(studyGroup);
@@ -90,5 +90,12 @@ public class TelegramUserServiceImpl implements TelegramUserService {
     @Override
     public void deleteUserInfoById(Long userId) {
         telegramUserRepository.deleteUserInfoById(userId);
+    }
+
+    @Override
+    public void addAdminRole(Long userId) {
+        TelegramUser telegramUser = telegramUserRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User with id: %s not found".formatted(userId)));
+        telegramUser.setAdmin(true);
     }
 }

@@ -72,13 +72,11 @@ public class TimetableServiceImpl implements TimetableService {
         if (update.hasCallbackQuery()) {
             if (TIMETABLE_FOR_TODAY.equals(update.getCallbackQuery().getData())) {
                 String timeTableForToday = getTimeTableForToday(telegramUser.getStudyGroup());
-                sendMessageService.sendMessage(chatId, timeTableForToday.isEmpty() ? "Нет данных для данной группы" : timeTableForToday,
-                        Collections.emptyList());
+                sendMessageService.sendMessage(chatId, timeTableForToday.isEmpty() ? "Нет данных для данной группы" : timeTableForToday);
             }
             if (TIMETABLE_FOR_WEEK.equals(update.getCallbackQuery().getData())) {
                 String timeTableForWeek = getTimeTableForWeek(telegramUser.getStudyGroup());
-                sendMessageService.sendMessage(chatId, timeTableForWeek.isEmpty() ? "Нет данных для данной группы" : timeTableForWeek,
-                        Collections.emptyList());
+                sendMessageService.sendMessage(chatId, timeTableForWeek.isEmpty() ? "Нет данных для данной группы" : timeTableForWeek);
             }
         } else {
             sendMessageService.sendMessage(chatId, "Выбери расписание",
