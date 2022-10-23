@@ -14,7 +14,6 @@ import ru.tvgu.telegrambot.service.SendMessageService;
 import ru.tvgu.telegrambot.service.TelegramUserService;
 
 import javax.persistence.EntityNotFoundException;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -89,7 +88,9 @@ public class TelegramUserServiceImpl implements TelegramUserService {
 
     @Override
     public void deleteUserInfoById(Long userId) {
-        telegramUserRepository.deleteUserInfoById(userId);
+        if (userId != null) {
+            telegramUserRepository.deleteUserInfoById(userId);
+        }
     }
 
     @Override

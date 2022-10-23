@@ -18,4 +18,11 @@ public interface SubjectRepository extends JpaRepository<Subject, Long> {
             where subject.studyGroup = :studyGroup
             """)
     List<Subject> findAllByStudyGroup(StudyGroup studyGroup);
+
+    @Query("""
+            select subject
+            from Subject subject 
+            join fetch subject.studyGroup
+            """)
+    List<Subject> findAllFetchStudyGroup();
 }

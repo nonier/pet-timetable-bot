@@ -5,6 +5,7 @@ import liquibase.repackaged.org.apache.commons.lang3.StringUtils;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import ru.tvgu.telegrambot.entity.Class;
 import ru.tvgu.telegrambot.entity.Faculty;
@@ -14,12 +15,13 @@ import ru.tvgu.telegrambot.repository.ClassRepository;
 import ru.tvgu.telegrambot.repository.FacultyRepository;
 import ru.tvgu.telegrambot.repository.StudyGroupRepository;
 import ru.tvgu.telegrambot.repository.SubjectRepository;
-import ru.tvgu.telegrambot.service.AdminCommandService;
+import ru.tvgu.telegrambot.service.CommandService;
 import ru.tvgu.telegrambot.service.SendMessageService;
 import ru.tvgu.telegrambot.service.TelegramUserService;
 
 @Service
-public class AdminCommandServiceImpl implements AdminCommandService {
+@Transactional
+public class CommandServiceImpl implements CommandService {
 
     private final TelegramUserService telegramUserService;
     private final SendMessageService sendMessageService;
@@ -30,7 +32,7 @@ public class AdminCommandServiceImpl implements AdminCommandService {
     private final ObjectMapper objectMapper;
 
     @Autowired
-    public AdminCommandServiceImpl(TelegramUserService telegramUserService, SendMessageService sendMessageService, FacultyRepository facultyRepository, StudyGroupRepository studyGroupRepository, SubjectRepository subjectRepository, ClassRepository classRepository, ObjectMapper objectMapper) {
+    public CommandServiceImpl(TelegramUserService telegramUserService, SendMessageService sendMessageService, FacultyRepository facultyRepository, StudyGroupRepository studyGroupRepository, SubjectRepository subjectRepository, ClassRepository classRepository, ObjectMapper objectMapper) {
         this.telegramUserService = telegramUserService;
         this.sendMessageService = sendMessageService;
         this.facultyRepository = facultyRepository;
@@ -41,12 +43,13 @@ public class AdminCommandServiceImpl implements AdminCommandService {
     }
 
     @Override
-    public void processAdminCommand(String command, Update update) {
+    public void processAdminCommand(String command, Update update, Long userId) {
         try {
             String text = StringUtils.substringBetween(update.getMessage().getText(),"/"," ") != null ?
                     StringUtils.substringBetween(update.getMessage().getText(),"/"," ")
                     : StringUtils.substringAfter(update.getMessage().getText(),"/");
             switch (text) {
+                case "help" -> sendAdminHelp(update);
                 case "getStudyGroups" -> getStudyGroups(update);
                 case "getFaculties" -> getFaculties(update);
                 case "getSubjects" -> getSubjects(update);
@@ -54,8 +57,9 @@ public class AdminCommandServiceImpl implements AdminCommandService {
                 case "createFaculty" -> createFaculty(command);
                 case "createStudyGroup" -> createStudyGroup(command);
                 case "createSubject" -> createSubject(command);
-                case "grantAdminRole" -> grantAdminRole(command);
                 case "createClass" -> createClass(command);
+                case "grantAdminRole" -> grantAdminRole(command);
+                case "forget" -> telegramUserService.deleteUserInfoById(userId);
                 default -> sendMessageService.sendMessage(update.getMessage().getChatId(), "Неподдерживаемая команда");
             }
         } catch (Exception exception) {
@@ -64,21 +68,59 @@ public class AdminCommandServiceImpl implements AdminCommandService {
         }
     }
 
+    @Override
+    public void processUserCommand(String command, Update update, Long userId) {
+        String text = StringUtils.substringAfter(command, "/");
+        switch (text) {
+            case "help" -> sendUserHelp(update);
+            case "forget" -> telegramUserService.deleteUserInfoById(userId);
+        }
+    }
+
+    private void sendAdminHelp(Update update) {
+        String help = """
+                Бот покажет расписание для твоей группы, если оно конечно в нём есть.
+                Всё просто, выбирай из предложенного в списке.
+                Доступные команды:
+                /forget - забывает выбранный факультет и группу, можно заполнить заного
+                /grantAdminRole {id} - добавляет юзеру роль админ по id
+                /getFaculties - возвращает список факультетов в формате json
+                /getStudyGroups - возвращает список групп в формате json
+                /getSubjects - возвращает список предметов в формате json
+                /getClasses - возвращает список пар в формате json
+                /createFaculty {faculty json} - создает факультет
+                /createStudyGroup {studyGroup json} - создает группу
+                /createSubject {subject json} - создает предмет
+                /createClass {class json} - создает пару
+                """;
+        sendMessageService.sendMessage(update.getMessage().getChatId(), help);
+    }
+
+    private void sendUserHelp(Update update) {
+        String help = """
+                Бот покажет расписание для твоей группы, если оно конечно в нём есть.
+                Всё просто, выбирай из предложенного в списке.
+                Доступные команды:
+                /forget - забывает выбранный факультет и группу, можно заполнить заного
+                """;
+        sendMessageService.sendMessage(update.getMessage().getChatId(), help);
+    }
+
     @SneakyThrows
     private void getClasses(Update update) {
-        String classesJson = objectMapper.writeValueAsString(classRepository.findAll());
+        String classesJson = objectMapper.writeValueAsString(classRepository.findAllFetchSubject());
         sendMessageService.sendMessage(update.getMessage().getChatId(), classesJson);
     }
 
     @SneakyThrows
     private void getSubjects(Update update) {
-        String subjectsJson = objectMapper.writeValueAsString(subjectRepository.findAll());
+        String subjectsJson = objectMapper.writeValueAsString(subjectRepository.findAllFetchStudyGroup());
         sendMessageService.sendMessage(update.getMessage().getChatId(), subjectsJson);
     }
 
     @SneakyThrows
     private void getStudyGroups(Update update) {
-        String studyGroupsJson = objectMapper.writeValueAsString(studyGroupRepository.findAll());
+        String studyGroupsJson = objectMapper.writeValueAsString(studyGroupRepository.findAllFetchFaculty());
         sendMessageService.sendMessage(update.getMessage().getChatId(), studyGroupsJson);
     }
 

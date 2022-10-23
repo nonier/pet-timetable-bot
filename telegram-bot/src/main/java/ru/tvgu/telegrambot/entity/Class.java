@@ -1,6 +1,5 @@
 package ru.tvgu.telegrambot.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -35,7 +34,6 @@ public class Class {
     @Column(name = "time", nullable = false)
     private LocalTime time;
 
-    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subject_id", referencedColumnName = "id")
     private Subject subject;

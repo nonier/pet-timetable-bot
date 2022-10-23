@@ -3,10 +3,10 @@ application:
   bot-token: ${BOT_TOKEN}
   bot-username: ${BOT_USERNAME}
   bot-owner-id: ${BOT_OWNER_ID}
-#Database
 spring:
   profiles:
     active: ${PROFILE}
+#Database
   datasource:
     driver-class-name: org.postgresql.Driver
     username: ${POSTGRES_USER}

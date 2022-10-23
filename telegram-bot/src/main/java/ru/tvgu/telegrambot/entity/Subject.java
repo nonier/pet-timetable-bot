@@ -27,11 +27,11 @@ public class Subject {
     @Column(name = "teacher", nullable = false)
     private String teacher;
 
-    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "study_group_id", referencedColumnName = "id")
     private StudyGroup studyGroup;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "subject")
     private List<Class> classes = new ArrayList<>();
 }

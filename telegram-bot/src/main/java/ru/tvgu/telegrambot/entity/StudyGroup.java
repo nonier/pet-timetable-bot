@@ -1,6 +1,7 @@
 package ru.tvgu.telegrambot.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
 import javax.persistence.*;
@@ -24,11 +25,11 @@ public class StudyGroup {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "faculty_id", referencedColumnName = "id")
     private Faculty faculty;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "studyGroup")
     private List<Subject> subjects = new ArrayList<>();
 }

@@ -16,7 +16,7 @@ public class ApplicationConfiguration {
     private final TelegramUserRepository telegramUserRepository;
 
     @Autowired
-    public ApplicationConfiguration(@Value("${BOT_OWNER_ID}") Long botOwnerId, TelegramUserRepository telegramUserRepository) {
+    public ApplicationConfiguration(@Value("${application.bot-owner-id}") Long botOwnerId, TelegramUserRepository telegramUserRepository) {
         this.botOwnerId = botOwnerId;
         this.telegramUserRepository = telegramUserRepository;
     }

@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import ru.tvgu.telegrambot.entity.TelegramUser;
-import ru.tvgu.telegrambot.service.AdminCommandService;
+import ru.tvgu.telegrambot.service.CommandService;
 import ru.tvgu.telegrambot.service.ProcessUpdateService;
 import ru.tvgu.telegrambot.service.TelegramUserService;
 import ru.tvgu.telegrambot.service.TimetableService;
@@ -15,17 +15,15 @@ import ru.tvgu.telegrambot.service.TimetableService;
 @Transactional
 public class ProcessUpdateServiceImpl implements ProcessUpdateService {
 
-    private static final String FORGET_ME_COMMAND = "/forget";
-
     private final TelegramUserService telegramUserService;
     private final TimetableService timetableService;
-    private final AdminCommandService adminCommandService;
+    private final CommandService commandService;
 
     @Autowired
-    public ProcessUpdateServiceImpl(TelegramUserService telegramUserService, TimetableService timetableService, AdminCommandService adminCommandService) {
+    public ProcessUpdateServiceImpl(TelegramUserService telegramUserService, TimetableService timetableService, CommandService commandService) {
         this.telegramUserService = telegramUserService;
         this.timetableService = timetableService;
-        this.adminCommandService = adminCommandService;
+        this.commandService = commandService;
     }
 
     @Override
@@ -33,9 +31,6 @@ public class ProcessUpdateServiceImpl implements ProcessUpdateService {
     public void process(Update update) {
         Long userId = update.hasCallbackQuery() ? update.getCallbackQuery().getFrom().getId()
                 : update.getMessage().getFrom().getId();
-        if (update.hasMessage() && FORGET_ME_COMMAND.equals(update.getMessage().getText())) {
-            telegramUserService.deleteUserInfoById(userId);
-        }
         telegramUserService.findById(userId)
                 .ifPresentOrElse(
                         telegramUser -> catchUserUpdate(telegramUser, update),
@@ -45,9 +40,13 @@ public class ProcessUpdateServiceImpl implements ProcessUpdateService {
 
     @SneakyThrows
     private void catchUserUpdate(TelegramUser telegramUser, Update update) {
-        if (telegramUser.isAdmin() && update.hasMessage() && update.getMessage().hasText() &&
+        if (update.hasMessage() && update.getMessage().hasText() &&
                 update.getMessage().getText().contains("/")) {
-            adminCommandService.processAdminCommand(update.getMessage().getText(), update);
+            if (telegramUser.isAdmin()) {
+                commandService.processAdminCommand(update.getMessage().getText(), update, telegramUser.getId());
+            } else {
+                commandService.processUserCommand(update.getMessage().getText(), update, telegramUser.getId());
+            }
             return;
         }
         telegramUserService.fillUserInfo(telegramUser, update);
