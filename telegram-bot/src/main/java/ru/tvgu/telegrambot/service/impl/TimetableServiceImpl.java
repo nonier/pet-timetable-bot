@@ -15,6 +15,7 @@ import ru.tvgu.telegrambot.utils.DateUtils;
 
 import java.time.LocalDate;
 import java.time.format.TextStyle;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -47,6 +48,7 @@ public class TimetableServiceImpl implements TimetableService {
                 .filter(cls -> Objects.equals(period, cls.getWeekType())
                         || WeekType.EVERY.equals(cls.getWeekType()))
                 .filter(cls -> Objects.equals(now.getDayOfWeek(), cls.getDayOfWeek()))
+                .sorted(Comparator.comparing(StudyClass::getTime))
                 .map(this::parseTodayClass)
                 .collect(Collectors.joining(System.lineSeparator()));
     }
@@ -60,6 +62,7 @@ public class TimetableServiceImpl implements TimetableService {
                 .flatMap(subject -> subject.getStudyClasses().stream())
                 .filter(cls -> Objects.equals(period, cls.getWeekType())
                         || WeekType.EVERY.equals(cls.getWeekType()))
+                .sorted(Comparator.comparing(StudyClass::getTime))
                 .map(this::parseWeekClass)
                 .collect(Collectors.joining(System.lineSeparator() + System.lineSeparator()));
     }
@@ -90,12 +93,14 @@ public class TimetableServiceImpl implements TimetableService {
                 System.lineSeparator() +
                 cl.getSubject().getTeacher() +
                 System.lineSeparator() +
-                cl.getAudienceNumber() +
+                cl.getAudienceNumber() + " ауд." +
                 System.lineSeparator();
     }
 
     private String parseWeekClass(StudyClass cl) {
-        return cl.getDayOfWeek().getDisplayName(TextStyle.FULL, new Locale("ru")) +
+        return "-------------------------------" +
+                System.lineSeparator() +
+                cl.getDayOfWeek().getDisplayName(TextStyle.FULL, new Locale("ru")) +
                 System.lineSeparator() +
                 cl.getSubject().getName() +
                 System.lineSeparator() +
@@ -103,7 +108,6 @@ public class TimetableServiceImpl implements TimetableService {
                 System.lineSeparator() +
                 cl.getSubject().getTeacher() +
                 System.lineSeparator() +
-                cl.getAudienceNumber() +
-                System.lineSeparator();
+                cl.getAudienceNumber() + " ауд.";
     }
 }
